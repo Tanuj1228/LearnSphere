@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - LearnSphere</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Ripple water effect background */
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 50%, #f8fafc, #e2e8f0, #cbd5e1);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 10%) repeat;
+      background-size: 80px 80px;
+      animation: ripple 10s linear infinite;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-25px, -25px) scale(1.05); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-800 relative z-10">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-white shadow-md">
+    <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+      <a class="text-xl font-semibold text-gray-800 hover:text-indigo-600 transition" href="/admin/panel">
+        LearnSphere Admin
+      </a>
+      <div class="flex items-center space-x-6">
+        <span class="text-sm text-gray-600">Welcome, <%= user.username %>!</span>
+        <a href="/" 
+           class="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-4 rounded-md transition">
+          Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto p-8 space-y-12 max-w-4xl relative z-10">
+
+    <!-- Subject Management -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-800">📘 Subject Management</h2>
+      <form action="/admin/subjects" method="POST" class="grid grid-cols-1 gap-4">
+        <input type="text" name="name" id="name" required placeholder="Subject Name"
+          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition"/>
+        <input type="number" name="year" id="year" min="1" max="4" required placeholder="Year (1-4)"
+          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition"/>
+        <button type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition transform hover:scale-105">
+          ➕ Add Subject
+        </button>
+      </form>
+    </section>
+
+    <!-- Upload Materials -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4 text-green-800">📂 Upload New Material</h2>
+      <form action="/admin/materials/upload" method="POST" enctype="multipart/form-data" id="uploadForm" class="space-y-4">
+        <select name="subjectId" id="subjectId" required
+          class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition">
+          <option value="">-- Choose a subject --</option>
+          <% subjects.forEach(subject => { %>
+            <option value="<%= subject._id %>"><%= subject.year %> Year - <%= subject.name %></option>
+          <% }) %>
+        </select>
+
+        <select name="category" id="category" required
+          class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition"
+          onchange="toggleFileInput(this.value)">
+          <option value="notes">Notes (PDF/PPT)</option>
+          <option value="syllabus">Syllabus</option>
+          <option value="videos">Video References</option>
+        </select>
+
+        <!-- File Input -->
+        <div id="fileInputDiv">
+          <input type="file" name="materialFile" id="materialFile"
+            class="block w-full text-sm text-slate-600 
+                   file:mr-4 file:py-2 file:px-4 
+                   file:rounded-full file:border-0 file:font-semibold 
+                   file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition"/>
+        </div>
+
+        <!-- Video Link Input -->
+        <div id="videoLinkDiv" class="hidden">
+          <input type="url" name="videoLink" id="videoLink" placeholder="https://example.com/video"
+            class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition"/>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition transform hover:scale-105">
+          ⬆ Upload Material
+        </button>
+      </form>
+    </section>
+
+    <!-- Existing Subjects & Materials -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-800">📑 Existing Subjects & Materials</h2>
+
+      <!-- Subjects Table -->
+      <div class="overflow-x-auto mb-8">
+        <h3 class="text-lg font-medium mb-2">Subjects</h3>
+        <table class="min-w-full divide-y divide-gray-300 bg-white bg-opacity-70 rounded-lg overflow-hidden">
+          <tbody class="divide-y divide-gray-200">
+            <% if (subjects.length > 0) { subjects.forEach(subject => { %>
+              <tr class="hover:bg-gray-100 transition">
+                <td class="px-6 py-3 text-sm font-medium text-gray-900"><%= subject.name %></td>
+                <td class="px-6 py-3 text-sm text-gray-600"><%= subject.year %></td>
+                <td class="px-6 py-3 text-right">
+                  <form action="/admin/subjects/delete/<%= subject._id %>" method="POST"
+                        onsubmit="return confirm('Delete this subject?');">
+                    <button type="submit"
+                      class="text-red-600 hover:text-red-900 transition font-semibold">🗑 Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) } else { %>
+              <tr><td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No subjects yet.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Files Table -->
+      <div class="overflow-x-auto">
+        <h3 class="text-lg font-medium mb-2">Uploaded Files</h3>
+        <table class="min-w-full divide-y divide-gray-300 bg-white bg-opacity-70 rounded-lg overflow-hidden">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">File / Video</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Category</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Subject</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% if (files.length > 0) { files.forEach(file => { 
+                 const fileSubject = subjects.find(s => s._id.toString() === file.metadata.subjectId.toString());
+            %>
+              <tr class="hover:bg-gray-100 transition">
+                <td class="px-6 py-3 text-sm font-medium text-gray-900">
+                  <% if (file.metadata.category === "videos") { %>
+                    <a href="<%= file.metadata.videoLink %>" target="_blank" class="text-blue-600 hover:underline"><%= file.metadata.videoLink %></a>
+                  <% } else { %>
+                    <%= file.metadata.originalName %>
+                  <% } %>
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-600"><%= file.metadata.category %></td>
+                <td class="px-6 py-3 text-sm text-gray-600"><%= fileSubject ? fileSubject.name : "Unknown" %></td>
+                <td class="px-6 py-3 text-right">
+                  <form action="/admin/materials/delete/<%= file._id %>" method="POST"
+                        onsubmit="return confirm('Delete this file?');">
+                    <button type="submit"
+                      class="text-red-600 hover:text-red-900 transition font-semibold">🗑 Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) } else { %>
+              <tr><td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No files uploaded.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-12 relative z-10">
+    <div class="container mx-auto px-6 py-4 text-center text-sm">
+      © <%= new Date().getFullYear() %> LearnSphere. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Script to toggle file/video input -->
+  <script>
+    function toggleFileInput(value) {
+      document.getElementById("fileInputDiv").classList.toggle("hidden", value === "videos");
+      document.getElementById("videoLinkDiv").classList.toggle("hidden", value !== "videos");
+    }
+  </script>
+</body>
+</html>

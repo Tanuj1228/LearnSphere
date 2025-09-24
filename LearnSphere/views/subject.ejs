@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= subject.name %> - LearnSphere</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+        }
+        .category-header {
+            background: linear-gradient(90deg, #6366f1, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors" href="/dashboard">LearnSphere</a>
+            <div>
+                <span class="text-gray-700 mr-4 font-medium">Welcome, <%= user.username %>!</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <a href="/dashboard" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Back to Dashboard</a>
+        <h1 class="text-4xl font-bold text-gray-800 mb-2"><%= subject.name %></h1>
+        <p class="text-lg text-gray-600 mb-6 font-medium"><%= subject.year %> Year</p>
+
+        <% ['syllabus', 'notes', 'videos'].forEach(category => { %>
+            <% const categoryFiles = files.filter(f => f.metadata.category === category); %>
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 capitalize category-header"><%= category %></h2>
+                <% if (categoryFiles.length > 0) { %>
+                    <div class="space-y-3">
+                        <% categoryFiles.forEach(file => { %>
+                            <div class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center hover:shadow-2xl transition-shadow duration-300">
+                                <span class="font-medium text-gray-800"><%= file.metadata.originalName %></span>
+                                <a href="/download/<%= file._id %>" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition-colors duration-200">
+                                    Download
+                                </a>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="text-gray-500 bg-white p-4 rounded-lg shadow-md">No materials in this category yet.</p>
+                <% } %>
+            </div>
+        <% }) %>
+    </main>
+
+</body>
+</html>
