@@ -18,6 +18,7 @@ router.get('/', (req, res) => {
     res.render('home');
 });
 
+//////
 
 // GET /dashboard - Display the student dashboard
 router.get('/dashboard', protect, async (req, res) => {
