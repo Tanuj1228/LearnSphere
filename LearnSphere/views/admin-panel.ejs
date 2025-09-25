@@ -1,5 +1,7 @@
+<!-- Commit Test: No functional changes, only comments & metadata -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +9,9 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Meta tag added just for commit tracking -->
+  <meta name="commit-note" content="Minor non-functional changes for Git commit">
 
   <style>
     /* Ripple water effect background for the page */
@@ -22,23 +27,35 @@
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 10%) repeat;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, transparent 10%) repeat;
       background-size: 80px 80px;
       animation: ripple 10s linear infinite;
       opacity: 0.3;
-      pointer-events: none; /* Allows clicks to pass through */
+      pointer-events: none;
+      /* Allows clicks to pass through */
     }
 
     /* Ripple keyframes */
     @keyframes ripple {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-25px, -25px) scale(1.05); }
-      100% { transform: translate(0, 0) scale(1); }
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(-25px, -25px) scale(1.05);
+      }
+
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
     }
   </style>
 </head>
+
 <body class="font-sans text-gray-800 relative z-10">
 
   <!-- Navbar -->
@@ -52,8 +69,7 @@
       <!-- User greeting and logout button -->
       <div class="flex items-center space-x-6">
         <span class="text-sm text-gray-600">Welcome, <%= user.username %>!</span>
-        <a href="/" 
-           class="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-4 rounded-md transition">
+        <a href="/" class="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-4 rounded-md transition">
           Logout
         </a>
       </div>
@@ -69,12 +85,12 @@
       <form action="/admin/subjects" method="POST" class="grid grid-cols-1 gap-4">
         <!-- Input: Subject Name -->
         <input type="text" name="name" id="name" required placeholder="Subject Name"
-          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition"/>
-        
+          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition" />
+
         <!-- Input: Year -->
         <input type="number" name="year" id="year" min="1" max="4" required placeholder="Year (1-4)"
-          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition"/>
-        
+          class="p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition" />
+
         <!-- Submit button -->
         <button type="submit"
           class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition transform hover:scale-105">
@@ -86,15 +102,18 @@
     <!-- Section: Upload Materials -->
     <section>
       <h2 class="text-2xl font-semibold mb-4 text-green-800">📂 Upload New Material</h2>
-      <form action="/admin/materials/upload" method="POST" enctype="multipart/form-data" id="uploadForm" class="space-y-4">
+      <form action="/admin/materials/upload" method="POST" enctype="multipart/form-data" id="uploadForm"
+        class="space-y-4">
 
         <!-- Dropdown: Select Subject -->
         <select name="subjectId" id="subjectId" required
           class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition">
           <option value="">-- Choose a subject --</option>
-          <% subjects.forEach(subject => { %>
-            <option value="<%= subject._id %>"><%= subject.year %> Year - <%= subject.name %></option>
-          <% }) %>
+          <% subjects.forEach(subject=> { %>
+            <option value="<%= subject._id %>">
+              <%= subject.year %> Year - <%= subject.name %>
+            </option>
+            <% }) %>
         </select>
 
         <!-- Dropdown: Material Category -->
@@ -108,17 +127,16 @@
 
         <!-- File Input for notes/syllabus -->
         <div id="fileInputDiv">
-          <input type="file" name="materialFile" id="materialFile"
-            class="block w-full text-sm text-slate-600 
+          <input type="file" name="materialFile" id="materialFile" class="block w-full text-sm text-slate-600 
                    file:mr-4 file:py-2 file:px-4 
                    file:rounded-full file:border-0 file:font-semibold 
-                   file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition"/>
+                   file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition" />
         </div>
 
         <!-- Video Link Input (hidden by default) -->
         <div id="videoLinkDiv" class="hidden">
           <input type="url" name="videoLink" id="videoLink" placeholder="https://example.com/video"
-            class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition"/>
+            class="w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 transition" />
         </div>
 
         <!-- Upload button -->
@@ -138,22 +156,28 @@
         <h3 class="text-lg font-medium mb-2">Subjects</h3>
         <table class="min-w-full divide-y divide-gray-300 bg-white bg-opacity-70 rounded-lg overflow-hidden">
           <tbody class="divide-y divide-gray-200">
-            <% if (subjects.length > 0) { subjects.forEach(subject => { %>
+            <% if (subjects.length> 0) { subjects.forEach(subject => { %>
               <tr class="hover:bg-gray-100 transition">
-                <td class="px-6 py-3 text-sm font-medium text-gray-900"><%= subject.name %></td>
-                <td class="px-6 py-3 text-sm text-gray-600"><%= subject.year %></td>
+                <td class="px-6 py-3 text-sm font-medium text-gray-900">
+                  <%= subject.name %>
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-600">
+                  <%= subject.year %>
+                </td>
                 <td class="px-6 py-3 text-right">
                   <!-- Delete Subject Form -->
                   <form action="/admin/subjects/delete/<%= subject._id %>" method="POST"
-                        onsubmit="return confirm('Delete this subject?');">
-                    <button type="submit"
-                      class="text-red-600 hover:text-red-900 transition font-semibold">🗑 Delete</button>
+                    onsubmit="return confirm('Delete this subject?');">
+                    <button type="submit" class="text-red-600 hover:text-red-900 transition font-semibold">🗑
+                      Delete</button>
                   </form>
                 </td>
               </tr>
-            <% }) } else { %>
-              <tr><td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No subjects yet.</td></tr>
-            <% } %>
+              <% }) } else { %>
+                <tr>
+                  <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No subjects yet.</td>
+                </tr>
+                <% } %>
           </tbody>
         </table>
       </div>
@@ -171,32 +195,40 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <% if (files.length > 0) { files.forEach(file => { 
-                 const fileSubject = subjects.find(s => s._id.toString() === file.metadata.subjectId.toString());
-            %>
+            <% if (files.length> 0) { files.forEach(file => {
+              const fileSubject = subjects.find(s => s._id.toString() === file.metadata.subjectId.toString());
+              %>
               <tr class="hover:bg-gray-100 transition">
                 <td class="px-6 py-3 text-sm font-medium text-gray-900">
                   <!-- Display video link if category is videos -->
-                  <% if (file.metadata.category === "videos") { %>
-                    <a href="<%= file.metadata.videoLink %>" target="_blank" class="text-blue-600 hover:underline"><%= file.metadata.videoLink %></a>
-                  <% } else { %>
-                    <%= file.metadata.originalName %>
-                  <% } %>
+                  <% if (file.metadata.category==="videos" ) { %>
+                    <a href="<%= file.metadata.videoLink %>" target="_blank" class="text-blue-600 hover:underline">
+                      <%= file.metadata.videoLink %>
+                    </a>
+                    <% } else { %>
+                      <%= file.metadata.originalName %>
+                        <% } %>
                 </td>
-                <td class="px-6 py-3 text-sm text-gray-600"><%= file.metadata.category %></td>
-                <td class="px-6 py-3 text-sm text-gray-600"><%= fileSubject ? fileSubject.name : "Unknown" %></td>
+                <td class="px-6 py-3 text-sm text-gray-600">
+                  <%= file.metadata.category %>
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-600">
+                  <%= fileSubject ? fileSubject.name : "Unknown" %>
+                </td>
                 <td class="px-6 py-3 text-right">
                   <!-- Delete File Form -->
                   <form action="/admin/materials/delete/<%= file._id %>" method="POST"
-                        onsubmit="return confirm('Delete this file?');">
-                    <button type="submit"
-                      class="text-red-600 hover:text-red-900 transition font-semibold">🗑 Delete</button>
+                    onsubmit="return confirm('Delete this file?');">
+                    <button type="submit" class="text-red-600 hover:text-red-900 transition font-semibold">🗑
+                      Delete</button>
                   </form>
                 </td>
               </tr>
-            <% }) } else { %>
-              <tr><td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No files uploaded.</td></tr>
-            <% } %>
+              <% }) } else { %>
+                <tr>
+                  <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No files uploaded.</td>
+                </tr>
+                <% } %>
           </tbody>
         </table>
       </div>
@@ -212,10 +244,12 @@
 
   <!-- Script: Toggle between file input and video link input based on category -->
   <script>
+    // Simple toggle function - unchanged
     function toggleFileInput(value) {
       document.getElementById("fileInputDiv").classList.toggle("hidden", value === "videos");
       document.getElementById("videoLinkDiv").classList.toggle("hidden", value !== "videos");
     }
   </script>
 </body>
+
 </html>
